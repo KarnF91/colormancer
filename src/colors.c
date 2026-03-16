@@ -140,8 +140,6 @@ cmHSV get_HSV(cmColor colors) {
     v = v * 100;
     s = s * 100;
 
-    printf("HSV: %f %f %f\n", h, s, v);
-
     hsv.hue = h;
     hsv.saturation = s;
     hsv.value = v;
@@ -199,8 +197,6 @@ cmHSL get_HSL(cmColor colors) {
     s = s * 100;
     l = l * 100;
 
-    printf("HSL: %f %f %f\n", h, s, l);
-
     hsl.hue = h;
     hsl.saturation = s;
     hsl.lightness = l;
@@ -209,46 +205,11 @@ cmHSL get_HSL(cmColor colors) {
 }
 
 void get_split_complementary(cmColor colors) {
-    float red = colors.red;
-    float green = colors.green;
-    float blue = colors.blue;
-
-    float rf = red /255, gf = green / 255, bf = blue / 255;
-
-    float min = fmin_rgb(rf, gf, bf);
-    float max = fmax_rgb(rf, gf, bf);
-
-    cmHSL hsl;
+    cmHSL hsl = get_HSL(colors);
 
     float h = hsl.hue;
     float s = hsl.saturation;
     float l = hsl.lightness;
-
-    float c;
-    float x;
-    float m;
-
-    l = (max + min) / 2;
-
-    if (l < 0.5) {
-	s = (max - min) / (max + min);
-    } else {
-	s = (max - min) / (2.0 - (max + min));
-    };
-
-    if (max == rf) {
-	h = (gf - bf) / (max - min);
-    } else if (max == gf) {
-	h = 2.0 + (bf - rf) / (max - min);
-    } else {
-	h = 4.0 + (rf - gf) / (max - min);
-    };
-
-    if (h < 0) {
-	h = h + 360;
-    } else {
-	h = h * 60;
-    };
 
     float comp_color = h + 180;
 
@@ -302,15 +263,19 @@ cmColor convertHSL_to_RGB(cmHSL hsl) {
     s = hsl.saturation;
     l = hsl.lightness;
 
-    float norm_hue = h / 360;
-    float norm_sat = s;
-    float norm_light = l;
+    float norm_hue = h;
+    float norm_sat = s / 100;
+    float norm_light = l / 100;
 
     float c, x, m;
 
-    c = (1 - (f_abs(2 * l - 1))) * norm_sat;
+    if (l <= 0.5) {
+	c = norm_sat * 2 * norm_light;
+    } else {
+	c = norm_sat * (2 - 2 * norm_light);
+    };
 
-    x = c * (((f_abs(norm_hue * 6)) / 2 - 1));
+    x = c * (((f_abs(norm_hue / 60)) / 2 - 1));
 
     m = norm_light - (c / 2);
 
@@ -393,9 +358,6 @@ cmColor convertHSL_to_RGB(cmHSL hsl) {
     if (final_green < 0) {
 	final_green = 0;
     };
-
-    /*printf("Norms R: %f, G: %f, B: %f\n", norm_r, norm_g, norm_b);
-    printf("Finals R: %i, G: %i, B: %i\n", final_red, final_green, final_blue);*/
 
     cmColor colors;
 

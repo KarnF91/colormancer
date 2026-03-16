@@ -230,16 +230,19 @@ void test_get_HSL() {
 
     float min = fmin_rgb(rf, gf, bf), max = fmax_rgb(rf, gf, bf);
 
-    l = (max - min) / 2; // gf = 0.976470 rf = 0.368627, 0.607843 / 2 = 0.303921
+    l = (max + min) / 2; // gf = 0.976470 rf = 0.368627, 0.607843 / 2 = 0.303921
+			 // max + min = 1.345097 / 2 = 0.672548
+			 // max - min = 0.607843,/ max + min = 1.345097 = 0.451895 
+			 // 2 - 1.345097 = 0.654903
 
     if (l < 0.5) {
-	s = (max - min) / (max + min);
+	s = (max - min) / (max + min); // 0.607843 / 1.345097 = 0.451895
     } else {
-	s = (max - min) / (2.0 - (max + min));
+	s = (max - min) / (2.0 - (max + min)); // 0.607843 / 0.654903 = 0.928142
     };
 
     // 0.607843 / 1.345097 = 0.451895
-    float s_expected = 0.451895;
+    float s_expected = 0.928142;
 
     if (fp_comp(s, s_expected, 0.001000)) {
 	printf("test_get_HSL pt1: \x1b[38;2;0;255;0m Passed! \x1b[0m\n");
@@ -292,6 +295,26 @@ void test_get_HSL() {
     } else {
 	printf("test_get_HSL pt3: \x1b[38;2;255;0;0m Failed! \x1b[0m\n");
 	printf("expected %f got %f\n", adj_h_expected, h);
+    };
+
+    s = s * 100;
+    l = l * 100;
+
+    cmHSL newHSL = get_HSL(colors);
+    
+    float final_h = newHSL.hue;
+    float final_s = newHSL.saturation;
+    float final_l = newHSL.lightness;
+
+    float final_h_expected = 131.22576;
+    float final_s_expected = 92.814203;
+    float final_l_expected = 67.25485;
+
+    if (fp_comp(final_h, final_h_expected, 0.001000) && fp_comp(final_s, final_s_expected, 0.001000) && fp_comp(final_l, final_l_expected, 0.001000)) {
+	printf("test_get_HSL: \x1b[38;2;0;255;0m Passed! \x1b[0m\n");
+    } else {
+	printf("test_get_HSL: \x1b[38;2;255;0;0m Failed! \x1b[0m\n");
+	printf("expected %f %f %f got %f %f %f\n", final_h_expected, final_s_expected, final_l_expected, final_h, final_s, final_l);
     };
 }
 
