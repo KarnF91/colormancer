@@ -34,6 +34,8 @@ typedef struct {
 
 float f_abs(float v);
 cmColor base_color(cmColor colors);
+cmColor complementary_color(cmColor colors);
+cmColor split_complementary_color(cmColor colors);
 int min_rgb(int r, int g, int b);
 int max_rgb(int r, int g, int b);
 cmColor complementary(cmColor colors);
@@ -41,7 +43,8 @@ float fmin_rgb(float r, float g, float b);
 float fmax_rgb(float r, float g, float b);
 cmHSV get_HSV(cmColor colors);
 cmHSL get_HSL(cmColor colors);
-void get_split_complementary(cmColor colors);
+cmColor get_pos_split_complementary(cmColor colors);
+cmColor get_neg_split_complementary(cmColor color);
 cmColor convertHSL_to_RGB(cmHSL hsl);
 
 #endif

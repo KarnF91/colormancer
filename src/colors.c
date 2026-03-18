@@ -20,7 +20,33 @@ cmColor base_color(cmColor colors) {
     int green = colors.green;
     int blue = colors.blue;
 
-    printf("RGB: %i %i %i: \x1b[48;2;%i;%i;%im          \x1b[0m\n", red, green, blue, red, green, blue);
+    int maxr = 255 - red, maxg = 255 - green, maxb = 255 - blue;
+
+    printf("\x1b[48;2;%i;%i;%im\x1b[38;2;%i;%i;%im %i, %i, %i \x1b[0m\x1b[0m\n", red, green, blue, maxr, maxg, maxb, red, green, blue);
+}
+
+cmColor complementary_color(cmColor colors) {
+    cmColor comp_color = complementary(colors);
+
+    int red = comp_color.red, green = comp_color.green, blue = comp_color.blue;
+
+    int read_red = 255 - red, read_green = 255 - green, read_blue = 255 - blue;
+
+    printf("\x1b[48;2;%i;%i;%im\x1b[38;2;%i;%i;%im %i, %i, %i \x1b[0m\x1b[0m\n", red, green, blue, read_red, read_green, read_blue, red, green, blue);
+}
+
+cmColor split_complementary_color(cmColor colors) {
+    cmColor pos_color = get_pos_split_complementary(colors);
+    cmColor neg_color = get_neg_split_complementary(colors);
+
+    int pos_red = pos_color.red, pos_green = pos_color.green, pos_blue = pos_color.blue;
+    int neg_red = neg_color.red, neg_green = neg_color.green, neg_blue = neg_color.blue;
+
+    int read_pred = 255 - pos_red, read_pgreen = 255 - pos_green, read_pblue = 255 - pos_blue;
+    int read_nred = 255 - neg_red, read_ngreen = 255 - neg_green, read_nblue = 255 - neg_blue;
+
+    printf("\x1b[48;2;%i;%i;%im\x1b[38;2;%i;%i;%im %i, %i, %i \x1b[0m\x1b[0m\n", pos_red, pos_green, pos_blue, read_pred, read_pgreen, read_pblue, pos_red, pos_green, pos_blue);
+    printf("\x1b[48;2;%i;%i;%im\x1b[38;2;%i;%i;%im %i, %i, %i \x1b[0m\x1b[0m\n", neg_red, neg_green, neg_blue, read_nred, read_ngreen, read_nblue, neg_red, neg_green, neg_blue);
 }
 
 int min_rgb(int r, int g, int b) {
@@ -88,11 +114,21 @@ cmColor complementary(cmColor colors) {
     int max_green = 255;
     int max_blue = 255;
 
+    int red = colors.red;
+    int green = colors.green;
+    int blue = colors.blue;
+
     int comp_red = max_red - colors.red;
     int comp_green = max_green - colors.green;
     int comp_blue = max_blue - colors.blue;
 
-    printf("RGB: %i %i %i: \x1b[48;2;%i;%i;%im          \x1b[0m\n", comp_red, comp_green, comp_blue, comp_red, comp_green, comp_blue);
+    cmColor compcolor;
+
+    compcolor.red = comp_red;
+    compcolor.green = comp_green;
+    compcolor.blue = comp_blue;
+
+    return compcolor;
 }
 
 cmHSV get_HSV(cmColor colors) {
@@ -204,7 +240,7 @@ cmHSL get_HSL(cmColor colors) {
     return hsl;
 }
 
-void get_split_complementary(cmColor colors) {
+cmColor get_pos_split_complementary(cmColor colors) {
     cmHSL hsl = get_HSL(colors);
 
     float h = hsl.hue;
@@ -227,6 +263,36 @@ void get_split_complementary(cmColor colors) {
 	pos_split = pos_split;
     };
 
+    cmHSL posHSL;
+
+    posHSL.hue = pos_split;
+    posHSL.saturation = s;
+    posHSL.lightness = l;
+
+    cmColor posColor;
+
+    posColor = convertHSL_to_RGB(posHSL);
+
+    int pos_mr = 255 - posColor.red, pos_mg = 255 - posColor.green, pos_mb = 255 - posColor.blue;
+
+    return posColor;
+}
+
+cmColor get_neg_split_complementary(cmColor colors) {
+    cmHSL hsl = get_HSL(colors);
+
+    float h = hsl.hue;
+    float s = hsl.saturation;
+    float l = hsl.lightness;
+
+    float comp_color = h + 180;
+
+    if (comp_color > 360) {
+	comp_color = comp_color - 360;
+    } else {
+	comp_color = comp_color;
+    };
+
     float neg_split = comp_color - 30;
 
     if (neg_split < 0) {
@@ -236,26 +302,19 @@ void get_split_complementary(cmColor colors) {
     };
 
     cmHSL negHSL;
-    cmHSL posHSL;
 
     negHSL.hue = neg_split;
     negHSL.saturation = s;
     negHSL.lightness = l;
 
-    posHSL.hue = pos_split;
-    posHSL.saturation = s;
-    posHSL.lightness = l;
-
     cmColor negColor;
-    cmColor posColor;
 
     negColor = convertHSL_to_RGB(negHSL);
-    posColor = convertHSL_to_RGB(posHSL);
 
-    printf("RGB: %i %i %i: \x1b[48;2;%i;%i;%im          \x1b[0m\n", posColor.red, posColor.green, posColor.blue, posColor.red, posColor.green, posColor.blue);
-    printf("RGB: %i %i %i: \x1b[48;2;%i;%i;%im          \x1b[0m\n", negColor.red, negColor.green, negColor.blue, negColor.red, negColor.green, negColor.blue);
+    int neg_mr = 255 - negColor.red, neg_mg = 255 - negColor.green, neg_mb = 255 - negColor.blue;
+
+    return negColor;
 }
-
 cmColor convertHSL_to_RGB(cmHSL hsl) {
     float h, s, l;
 
