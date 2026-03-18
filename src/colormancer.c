@@ -35,9 +35,6 @@ int main(int argc, char* argv[]) {
     int green = colors.green = atoi(argv[2]);
     int blue = colors.blue = atoi(argv[3]);
 
-    get_HSV(colors);
-    get_HSL(colors);
-
     base_color(colors);
     complementary_color(colors);
     split_complementary_color(colors);
