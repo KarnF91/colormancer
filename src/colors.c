@@ -261,6 +261,8 @@ cmColor get_pos_split_complementary(cmColor colors) {
 
     if (comp_color > 360) {
 	comp_color = comp_color - 360;
+    } else if (comp_color < 0) {
+	comp_color = comp_color + 360;
     } else {
 	comp_color = comp_color;
     };
@@ -269,6 +271,8 @@ cmColor get_pos_split_complementary(cmColor colors) {
 
     if (pos_split > 360) {
 	pos_split = pos_split - 360;
+    } else if (pos_split < 0) {
+	pos_split = pos_split + 360;
     } else {
 	pos_split = pos_split;
     };
@@ -299,6 +303,8 @@ cmColor get_neg_split_complementary(cmColor colors) {
 
     if (comp_color > 360) {
 	comp_color = comp_color - 360;
+    } else if (comp_color < 0) {
+	comp_color = comp_color + 360;
     } else {
 	comp_color = comp_color;
     };
@@ -307,6 +313,8 @@ cmColor get_neg_split_complementary(cmColor colors) {
 
     if (neg_split < 0) {
 	neg_split = neg_split + 360;
+    } else if (neg_split > 360) {
+	neg_split = neg_split - 360;
     } else {
 	neg_split = neg_split;
     };
