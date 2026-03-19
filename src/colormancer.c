@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 #include "colors.h"
 
@@ -38,6 +39,7 @@ int main(int argc, char* argv[]) {
     base_color(colors);
     complementary_color(colors);
     split_complementary_color(colors);
+    analogous_color(colors);
 
     return 0;
 }

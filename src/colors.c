@@ -11,10 +11,6 @@ float f_abs(float v) {
     return *(float*)&bits;
 }
 
-float f_mod(float x, float y) {
-    return x - (y * (x / y));
-}
-
 cmColor base_color(cmColor colors) {
     int red = colors.red;
     int green = colors.green;
@@ -38,6 +34,20 @@ cmColor complementary_color(cmColor colors) {
 cmColor split_complementary_color(cmColor colors) {
     cmColor pos_color = get_pos_split_complementary(colors);
     cmColor neg_color = get_neg_split_complementary(colors);
+
+    int pos_red = pos_color.red, pos_green = pos_color.green, pos_blue = pos_color.blue;
+    int neg_red = neg_color.red, neg_green = neg_color.green, neg_blue = neg_color.blue;
+
+    int read_pred = 255 - pos_red, read_pgreen = 255 - pos_green, read_pblue = 255 - pos_blue;
+    int read_nred = 255 - neg_red, read_ngreen = 255 - neg_green, read_nblue = 255 - neg_blue;
+
+    printf("\x1b[48;2;%i;%i;%im\x1b[38;2;%i;%i;%im %i, %i, %i \x1b[0m\x1b[0m\n", pos_red, pos_green, pos_blue, read_pred, read_pgreen, read_pblue, pos_red, pos_green, pos_blue);
+    printf("\x1b[48;2;%i;%i;%im\x1b[38;2;%i;%i;%im %i, %i, %i \x1b[0m\x1b[0m\n", neg_red, neg_green, neg_blue, read_nred, read_ngreen, read_nblue, neg_red, neg_green, neg_blue);
+}
+
+cmColor analogous_color(cmColor colors) {
+    cmColor pos_color = get_pos_analogous(colors);
+    cmColor neg_color = get_neg_analogous(colors);
 
     int pos_red = pos_color.red, pos_green = pos_color.green, pos_blue = pos_color.blue;
     int neg_red = neg_color.red, neg_green = neg_color.green, neg_blue = neg_color.blue;
@@ -315,6 +325,60 @@ cmColor get_neg_split_complementary(cmColor colors) {
 
     return negColor;
 }
+
+cmColor get_pos_analogous(cmColor colors) {
+    cmHSL hsl = get_HSL(colors);
+
+    float h = hsl.hue, s = hsl.saturation, l = hsl.lightness;
+
+    float pos_split = h + 30;
+
+    if (pos_split < 0) {
+	pos_split = pos_split + 360;
+    } else if (pos_split > 360) {
+	pos_split = pos_split - 360;
+    } else {
+	pos_split = pos_split;
+    };
+
+    cmHSL posHSL;
+
+    posHSL.hue = pos_split;
+    posHSL.saturation = s;
+    posHSL.lightness = l;
+
+    cmColor posColor = convertHSL_to_RGB(posHSL);
+
+    return posColor;
+}
+
+cmColor get_neg_analogous(cmColor colors) {
+    cmHSL hsl = get_HSL(colors);
+
+    float h = hsl.hue, s = hsl.saturation, l = hsl.lightness;
+
+    float neg_split = h - 30;
+
+    if (neg_split < 0) {
+	neg_split = neg_split + 360;
+    } else if (neg_split > 360) {
+	neg_split = neg_split - 360;
+    } else {
+	neg_split = neg_split;
+    };
+
+    cmHSL negHSL;
+
+    negHSL.hue = neg_split;
+    negHSL.saturation = s;
+    negHSL.lightness = l;
+
+    cmColor negColor = convertHSL_to_RGB(negHSL);
+
+    return negColor;
+
+}
+
 cmColor convertHSL_to_RGB(cmHSL hsl) {
     float h, s, l;
 
@@ -334,7 +398,11 @@ cmColor convertHSL_to_RGB(cmHSL hsl) {
 	c = norm_sat * (2 - 2 * norm_light);
     };
 
-    x = c * (((f_abs(norm_hue / 60)) / 2 - 1));
+//    x = c * (((f_abs(norm_hue / 60)) / 2 - 1))
+
+    float ab_val = f_abs(norm_hue / 60);
+
+    x = c * (fmod(ab_val, 2) - 1);
 
     m = norm_light - (c / 2);
 
