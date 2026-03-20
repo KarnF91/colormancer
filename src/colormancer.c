@@ -40,6 +40,8 @@ int main(int argc, char* argv[]) {
     complementary_color(colors);
     split_complementary_color(colors);
     analogous_color(colors);
+    triadic_color(colors);
+    tetradic_color(colors);
 
     return 0;
 }

@@ -37,6 +37,8 @@ cmColor base_color(cmColor colors);
 cmColor complementary_color(cmColor colors);
 cmColor split_complementary_color(cmColor colors);
 cmColor analogous_color(cmColor colors);
+cmColor triadic_color(cmColor colors);
+cmColor tetradic_color(cmColor colors);
 int min_rgb(int r, int g, int b);
 int max_rgb(int r, int g, int b);
 cmColor complementary(cmColor colors);
@@ -48,6 +50,11 @@ cmColor get_pos_split_complementary(cmColor colors);
 cmColor get_neg_split_complementary(cmColor colors);
 cmColor get_pos_analogous(cmColor colors);
 cmColor get_neg_analogous(cmColor colors);
+cmColor get_first_triadic(cmColor colors);
+cmColor get_second_triadic(cmColor colors);
+cmColor get_first_tetradic(cmColor colors);
+cmColor get_second_tetradic(cmColor colors);
+cmColor get_third_tetradic(cmColor colors);
 cmColor convertHSL_to_RGB(cmHSL hsl);
 
 #endif

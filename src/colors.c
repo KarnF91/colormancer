@@ -59,6 +59,38 @@ cmColor analogous_color(cmColor colors) {
     printf("\x1b[48;2;%i;%i;%im\x1b[38;2;%i;%i;%im %i, %i, %i \x1b[0m\x1b[0m\n", neg_red, neg_green, neg_blue, read_nred, read_ngreen, read_nblue, neg_red, neg_green, neg_blue);
 }
 
+cmColor triadic_color(cmColor colors) {
+    cmColor first_tri_color = get_first_triadic(colors);
+    cmColor second_triadic_color = get_second_triadic(colors);
+
+    int first_red = first_tri_color.red, first_green = first_tri_color.green, first_blue = first_tri_color.blue;
+    int second_red = second_triadic_color.red, second_green = second_triadic_color.green, second_blue = second_triadic_color.blue;
+
+    int read_fstred = 255 - first_red, read_fstgreen = 255 - first_green, read_fstblue = 255 - first_blue;
+    int read_sndred = 255 - second_red, read_sndgreen = 255 - second_green, read_sndblue = 255 - second_blue;
+
+    printf("\x1b[48;2;%i;%i;%im\x1b[38;2;%i;%i;%im %i, %i, %i \x1b[0m\x1b[0m\n", first_red, first_green, first_blue, read_fstred, read_fstgreen, read_fstblue, first_red, first_green, first_blue);
+    printf("\x1b[48;2;%i;%i;%im\x1b[38;2;%i;%i;%im %i, %i, %i \x1b[0m\x1b[0m\n", second_red, second_green, second_blue, read_sndred, read_sndgreen, read_sndblue, second_red, second_green, second_blue);
+}
+
+cmColor tetradic_color(cmColor colors) {
+    cmColor first_tetra_color = get_first_tetradic(colors);
+    cmColor second_tetra_color = get_second_tetradic(colors);
+    cmColor third_tetra_color = get_third_tetradic(colors);
+
+    int first_red = first_tetra_color.red, first_green = first_tetra_color.green, first_blue = first_tetra_color.blue;
+    int second_red = second_tetra_color.red, second_green = second_tetra_color.green, second_blue = second_tetra_color.blue;
+    int third_red = third_tetra_color.red, third_green = third_tetra_color.green, third_blue = third_tetra_color.blue;
+
+    int read_fstred = 255 - first_red, read_fstgreen = 255 - first_green, read_fstblue = 255 - first_blue;
+    int read_sndred = 255 - second_red, read_sndgreen = 255 - second_green, read_sndblue = 255 - second_blue;
+    int read_trdred = 255 - third_red, read_trdgreen = 255 - third_green, read_trdblue = 255 - third_blue;
+
+    printf("\x1b[48;2;%i;%i;%im\x1b[38;2;%i;%i;%im %i, %i, %i \x1b[0m\x1b[0m\n", first_red, first_green, first_blue, read_fstred, read_fstgreen, read_fstblue, first_red, first_green, first_blue);
+    printf("\x1b[48;2;%i;%i;%im\x1b[38;2;%i;%i;%im %i, %i, %i \x1b[0m\x1b[0m\n", second_red, second_green, second_blue, read_sndred, read_sndgreen, read_sndblue, second_red, second_green, second_blue);
+    printf("\x1b[48;2;%i;%i;%im\x1b[38;2;%i;%i;%im %i, %i, %i \x1b[0m\x1b[0m\n", third_red, third_green, third_blue, read_trdred, read_trdgreen, read_trdblue, third_red, third_green, third_blue);
+}
+
 int min_rgb(int r, int g, int b) {
     if (r < g && r < b) {
 	return r;
@@ -385,6 +417,131 @@ cmColor get_neg_analogous(cmColor colors) {
 
     return negColor;
 
+}
+
+cmColor get_first_triadic(cmColor colors) {
+    cmHSL hsl = get_HSL(colors);
+
+    float h = hsl.hue, s = hsl.saturation, l = hsl.lightness;
+    float triadic = h + 120;
+
+    if (triadic < 0) {
+	triadic = triadic + 360;
+    } else if (triadic > 360) {
+	triadic = triadic - 360;
+    } else {
+	triadic = triadic;
+    };
+
+    cmHSL triHSL;
+
+    triHSL.hue = triadic;
+    triHSL.saturation = s;
+    triHSL.lightness = l;
+
+    cmColor triColor = convertHSL_to_RGB(triHSL);
+
+    return triColor;
+}
+
+cmColor get_second_triadic(cmColor colors) {
+    cmHSL hsl = get_HSL(colors);
+
+    float h = hsl.hue, s = hsl.saturation, l = hsl.lightness;
+    float triadic = h + 240;
+
+    if (triadic < 0) {
+	triadic = triadic + 360;
+    } else if (triadic > 360) {
+	triadic = triadic - 360;
+    } else {
+	triadic = triadic;
+    };
+
+    cmHSL triHSL;
+
+    triHSL.hue = triadic;
+    triHSL.saturation = s;
+    triHSL.lightness = l;
+
+    cmColor triColor = convertHSL_to_RGB(triHSL);
+
+    return triColor;
+}
+
+cmColor get_third_tetradic(cmColor colors) {
+    cmHSL hsl = get_HSL(colors);
+
+    float h = hsl.hue, s = hsl.saturation, l = hsl.lightness;
+    float tetradic = h + 270;
+
+    if (tetradic < 0) {
+	tetradic = tetradic + 360;
+    } else if (tetradic > 360) {
+	tetradic = tetradic - 360;
+    } else {
+	tetradic = tetradic;
+    };
+
+    cmHSL tetHSL;
+
+    tetHSL.hue = tetradic;
+    tetHSL.saturation = s;
+    tetHSL.lightness = l;
+
+    cmColor tetColor = convertHSL_to_RGB(tetHSL);
+
+    return tetColor;
+}
+
+cmColor get_second_tetradic(cmColor colors) {
+    cmHSL hsl = get_HSL(colors);
+
+    float h = hsl.hue, s = hsl.saturation, l = hsl.lightness;
+    float tetradic = h + 180;
+
+    if (tetradic < 0) {
+	tetradic = tetradic + 360;
+    } else if (tetradic > 360) {
+	tetradic = tetradic - 360;
+    } else {
+	tetradic = tetradic;
+    };
+
+    cmHSL tetHSL;
+
+    tetHSL.hue = tetradic;
+    tetHSL.saturation = s;
+    tetHSL.lightness = l;
+
+    cmColor tetColor = convertHSL_to_RGB(tetHSL);
+
+    return tetColor;
+}
+
+cmColor get_first_tetradic(cmColor colors) {
+    cmHSL hsl = get_HSL(colors);
+
+    float h = hsl.hue, s = hsl.saturation, l = hsl.lightness;
+    float tetradic = h + 90;
+
+    if (tetradic < 0) {
+	tetradic = tetradic + 360;
+    } else if (tetradic > 360) {
+	tetradic = tetradic - 360;
+    } else {
+	tetradic = tetradic;
+    };
+
+    cmHSL tetHSL;
+
+    tetHSL.hue = tetradic;
+    tetHSL.saturation = s;
+    tetHSL.lightness = l;
+
+    cmColor tetColor = convertHSL_to_RGB(tetHSL);
+
+    return tetColor;
 }
 
 cmColor convertHSL_to_RGB(cmHSL hsl) {
