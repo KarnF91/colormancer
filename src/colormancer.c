@@ -3,6 +3,7 @@
 #include <math.h>
 
 #include "colors.h"
+#include "formatted_print.h"
 
 int main(int argc, char* argv[]) {
     cmColor colors;
